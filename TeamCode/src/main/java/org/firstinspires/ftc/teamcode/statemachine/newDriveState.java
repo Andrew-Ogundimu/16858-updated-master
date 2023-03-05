@@ -52,10 +52,10 @@ public class newDriveState extends State {
         this.distance = distance;
         this.speed = speed;
         this.direction = (direction - 45) % 360;
-        leftFront = motor.get(0);
-        rightFront = motor.get(1);
-        leftBack = motor.get(2);
-        rightBack = motor.get(3);
+        rightFront = motor.get(0);
+        leftFront = motor.get(1);
+        rightBack = motor.get(2);
+        leftBack = motor.get(3);
 
 
         leftFront.setDirection(DcMotor.Direction.FORWARD);
@@ -141,8 +141,8 @@ public class newDriveState extends State {
     }
 
     public void drive(double driveSpeed_x, double driveSpeed_y) {
-        leftFront.setPower(driveSpeed_x);
-        rightFront.setPower(driveSpeed_y);
+        leftFront.setPower(driveSpeed_y);
+        rightFront.setPower(driveSpeed_x);
         leftBack.setPower(driveSpeed_x);
         rightBack.setPower(driveSpeed_y);
     }

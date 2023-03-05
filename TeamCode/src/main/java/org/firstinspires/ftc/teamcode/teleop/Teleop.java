@@ -59,7 +59,7 @@ public class Teleop extends OpMode {
         public static Point pos = new Point(0.0,0.0);
         public static Point hookPos = new Point(102,73);
         private double minConfidence = 220;
-        private double min_radius = 30;
+        private double min_radius = 10;
         private double circle_area = 0;
         ArrayList<Mat> RGB = new ArrayList<>(3);
         Mat threshB = new Mat();
@@ -107,7 +107,7 @@ public class Teleop extends OpMode {
                 Imgproc.findContours(threshB, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
                 for (int i = 0; i < contours.size(); i++) {
                     if (Imgproc.contourArea(contours.get(i)) >= Math.PI * Math.pow(min_radius, 2)
-                            && Imgproc.contourArea(contours.get(i))<=10000) {
+                            && Imgproc.contourArea(contours.get(i))<=10000 && Math.abs(circularity(contours.get(i))-1)<1) {
                         filtered_contours.add(contours.get(i));
                     }
                 }
@@ -127,7 +127,7 @@ public class Teleop extends OpMode {
                 Imgproc.findContours(threshR, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
                 for (int i = 0; i < contours.size(); i++) {
                     if (Imgproc.contourArea(contours.get(i)) >= Math.PI * Math.pow(min_radius, 2)
-                            && Imgproc.contourArea(contours.get(i))<=10000) {
+                            && Imgproc.contourArea(contours.get(i))<=10000 && Math.abs(circularity(contours.get(i))-1)<1) {
                         filtered_contours.add(contours.get(i));
                     }
                 }
@@ -165,7 +165,7 @@ public class Teleop extends OpMode {
         bl.setDirection(DcMotor.Direction.FORWARD);
         fr.setDirection(DcMotor.Direction.REVERSE);
         br.setDirection(DcMotor.Direction.REVERSE);
-        xrail.setDirection(DcMotor.Direction.REVERSE);
+
         lift.setDirection(DcMotor.Direction.FORWARD);
         lift2.setDirection(DcMotor.Direction.FORWARD);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -264,22 +264,28 @@ public class Teleop extends OpMode {
         double magnitude = Math.sqrt(Math.pow(pipeline.hookPos.y-cone.y,2)+Math.pow(pipeline.hookPos.x-cone.x,2));
         if (gamepad1.right_bumper) {
             ac = true;
+            xrail.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            xrail.setTargetPosition(-1120);
+            xrail.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            xrail.setPower(1.0);
         } else if (gamepad1.right_trigger>0.5) {
             ac = false;
+            xrail.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
         if (ac==true) {
             if (cone.x == -1) {
                 ac = false;
+                xrail.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             } else {
                 double mx = (pipeline.hookPos.x-cone.x)/magnitude;
-                double my = (pipeline.hookPos.y-cone.y)/magnitude;
-                bl.setPower(mx * 0.1);
-                fr.setPower(mx * 0.1);
-                fl.setPower(my * 0.1);
-                br.setPower(my * 0.1);
+                double my = (cone.y-pipeline.hookPos.y)/magnitude;
+                bl.setPower(mx * 0.3);
+                fr.setPower(mx * 0.3);
+                fl.setPower(my * 0.3);
+                br.setPower(my * 0.3);
             }
         }
-        double coneAngle = Math.atan2(pipeline.hookPos.y-cone.y,pipeline.hookPos.x-cone.x);
+        double coneAngle = Math.atan2(cone.y-pipeline.hookPos.y,pipeline.hookPos.x-cone.x);
 
         telemetry.addData("hook Pos",pipeline.hookPos);
         telemetry.addData("Cone Angle",Math.toDegrees(coneAngle));

@@ -69,10 +69,10 @@ public class Auton extends OpMode {
     @Override
     public void init() {
 
-        leftFront  = hardwareMap.get(DcMotor.class, "fl");
-        rightFront = hardwareMap.get(DcMotor.class, "fr");
-        leftBack  = hardwareMap.get(DcMotor.class, "bl");
-        rightBack = hardwareMap.get(DcMotor.class, "br");
+        leftFront  = hardwareMap.get(DcMotor.class, "fl"); //0
+        rightFront = hardwareMap.get(DcMotor.class, "fr"); //1
+        leftBack  = hardwareMap.get(DcMotor.class, "bl"); //2
+        rightBack = hardwareMap.get(DcMotor.class, "br"); //3 ?
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();

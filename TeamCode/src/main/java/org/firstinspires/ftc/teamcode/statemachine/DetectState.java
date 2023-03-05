@@ -33,7 +33,7 @@ public class DetectState extends State {
 
         if (this.measurements >= 50 && (this.elapsedTime.milliseconds() > 1000)) {
             State[] states = {
-                    new newDriveState(stateMachine, this.motors, .6, 90, 1),
+                    new newDriveState(stateMachine, this.motors, .6, 270, 23),
                     //new oldDriveState(stateMachine, this.motors, .6, "forward", 1),
                     new DetectState(this.stateMachine, this.motors, imu),
             };
